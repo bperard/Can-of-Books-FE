@@ -4,7 +4,17 @@ class Profile extends Component {
 
   render() {
     /* TODO: render information about the developers */
-    return <p>Profile page coming soon</p>
+    return <>
+      <h1>
+        About
+      </h1>
+      <h2>
+        Adrienne Frey
+      </h2>
+      <h2>
+        Brandon Perard
+      </h2>
+    </>
   }
 };
 
