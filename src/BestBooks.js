@@ -2,6 +2,8 @@ import React from 'react';
 import axios from 'axios';
 import Carousel from 'react-bootstrap/Carousel';
 import BookModal from './BookModal';
+import { Button } from 'react-bootstrap';
+import UpdateBook from './UpdateBook';
 
 class BestBooks extends React.Component {
   constructor(props) {
@@ -87,6 +89,55 @@ class BestBooks extends React.Component {
     }
   }
 
+  // DELETE book
+
+  deleteBook = async (bookId) => {
+    try {
+      
+      // DB DELETE books endpoint
+      let url = `${process.env.REACT_APP_SERVER}/books/${bookId}`;
+
+      await axios.delete(url);
+
+      const booksArray = this.state.books;
+
+      const updatedBooks = booksArray.filter(book => book._id !== bookId);
+
+      this.setState({
+        books: updatedBooks
+      });
+
+    } catch (error) {
+      console.log(error.response);
+    }
+  }
+
+  // UPDATE book
+
+  updateBook = async (bookToUpdate) => {
+    try {
+
+      // DB PUT books endpoint
+      let url = `${process.env.REACT_APP_SERVER}/books/${bookToUpdate._id}`;
+      console.log(url, bookToUpdate);
+      const updatedBook = await axios.put(url, bookToUpdate);
+      
+      const booksArray = this.state.books;
+
+      const newBookArray = booksArray.map(book => updatedBook.data._id === book._id ?  // if updatedBook id is same as current book id
+        updatedBook.data : // return updated book if true
+        book // return current book if false
+        );
+
+      this.setState({
+        books: newBookArray
+      });
+
+    } catch (error) {
+      console.log(error.response);
+    }
+  }
+
   render() {
 
     return (
@@ -95,8 +146,8 @@ class BestBooks extends React.Component {
 
         {this.state.books.length ? (
           <Carousel>
-            {this.state.books.map(book => (
-              <Carousel.Item>
+            {this.state.books.map(book => ( // Container above & items below, key use unique string(id, index, etc)
+              <Carousel.Item key={book._id}>
                 <img
                   alt="book cat"
                   src="http://placekitten.com/200/300"
@@ -111,6 +162,16 @@ class BestBooks extends React.Component {
                   <p>
                     {book.status}
                   </p>
+                  <Button
+                    variant="dark"
+                    onClick={() => { this.deleteBook(book._id) }}
+                  >
+                    DELETE
+                  </Button>
+                  <UpdateBook 
+                    book={book}
+                    updateBook={this.updateBook}
+                  />
                 </Carousel.Caption>
               </Carousel.Item>
             ))
