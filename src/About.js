@@ -3,10 +3,9 @@ import { Component } from "react";
 class Profile extends Component {
 
   render() {
-    /* TODO: render information about the developers */
     return <>
       <h1>
-        About
+        Team Awesome
       </h1>
       <h2>
         Adrienne Frey
