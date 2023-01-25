@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import Carousel from 'react-bootstrap/Carousel';
+import BookModal from './BookModal';
 
 class BestBooks extends React.Component {
   constructor(props) {
@@ -41,6 +42,54 @@ class BestBooks extends React.Component {
     this.getBooks();
   }
 
+  handleOpenModal = () => {
+    this.setState({
+      showModal: true
+    });
+  }
+
+  handleCloseModal = () => {
+    this.setState({
+      showModal: false
+    });
+  }
+
+  handleBookSubmit = (event) => {
+    event.preventDefault();
+
+    // TODO: BUILD A BOOK OBJECT FROM MY FORM VALUES
+    let newBook = {
+      title: event.target.title.value,
+      description: event.target.description.value,
+      status: event.target.status.value,
+    }
+    console.log('new Book from form>>>', newBook);
+
+    // TODO: post my book to DB using my 2nd handler
+    this.postBook(newBook);
+  }
+
+  // *** 2nd Handler to post to DB
+
+  postBook = async (bookObj) => {
+    try {
+      // TODO: Create the url for axios to send book obj to server
+      let url = `${process.env.REACT_APP_SERVER}/books`;
+
+      // 2 args on a post: 1st is the url, 2nd is the data to send
+      let createdBook = await axios.post(url, bookObj);
+
+      this.setState({
+        books: [...this.state.books, createdBook.data]
+      })
+
+
+      // TODO: receive a created book and add it to state
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
   render() {
 
     /* TODO: render all the books in a Carousel */
@@ -76,9 +125,13 @@ class BestBooks extends React.Component {
           <h3>Book Collection is empty</h3>
         )
         }
+           <BookModal showModal={this.state.showModal} handleCloseModal={this.handleCloseModal}
+           handleBookSubmit = {this.handleBookSubmit}/>
+      <button onClick = {this.handleOpenModal}>New Book</button>
       </>
     )
-  }
+  };
 }
+
 
 export default BestBooks;
